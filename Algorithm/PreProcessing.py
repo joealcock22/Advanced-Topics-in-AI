@@ -12,7 +12,7 @@ df = pd.read_csv("Data/Raw/bank_transactions_data_2_augmented_clean_2.csv")
 print("Successfully Loaded Data")
 
 #Drop The Identifier Columns 
-id_columns = ["TransactionID, AccountID", "DeviceID", "IP Address", "MerchantID"]
+id_columns = ["TransactionID", "AccountID", "DeviceID", "IP Address", "MerchantID"]
 df.drop(columns=id_columns, inplace = True)
 print(f"Dropped ID columns: {id_columns}")
 print(f"Remaining Columns: {df.columns.tolist()}\n")
@@ -26,7 +26,7 @@ df["TransactionDate"] = pd.to_datetime(df["TransactionDate"], format="mixed")
 
 df["TransactionHour"] = df["TransactionDate"].dt.hour
 df["TransactionDay"] = df["TransactionDate"].dt.dayofweek
-df["TransactionMonth"] = df["TransactionMonth"].dt.month
+df["TransactionMonth"] = df["TransactionDate"].dt.month
 df["isWeekend"] = (df["TransactionDay"] >= 5).astype(int)
 
 #drop original date column as raw string is no longer needed 
@@ -36,10 +36,10 @@ print("Extracted : TransationHour, TransactionDay, TransactionMonth, isWeekend\n
 #Create Fraud Label
 #Uses real-world Fraud indicators to classify fraudulent transactions 
 print("Creating Fraud Label...")
-q95_amount = df["TrasnactionAmount"].quantile(0.95)
+q95_amount = df["TransactionAmount"].quantile(0.95)
 rule_multiple_logins = df["LoginAttempts"] > 1
 rule_drain_account = (
-    (df["TrasnactionAmount"] > q95_amount) &
+    (df["TransactionAmount"] > q95_amount) &
     (df["TransactionAmount"] > df["AccountBalance"] * 0.90)
 )
 
@@ -92,7 +92,8 @@ print(f"Columns : {df.columns.tolist()}")
 print(f"Missing Values : {df.isnull().sum().sum()}")
 print()
 
-output_path = "Data/Processed/preprocessed_transactions.csv"
+os.makedirs("/Users/joe.alcock/Documents/Advanced-Topics-in-AI/Data/Processed/", exist_ok = True)
+output_path = "/Users/joe.alcock/Documents/Advanced-Topics-in-AI/Data/Processed/preprocessed_transactions.csv"
 df.to_csv(output_path, index = False)
 print("PreProcessing Successful!")
 
