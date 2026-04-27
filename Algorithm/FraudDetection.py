@@ -14,9 +14,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import(
     classification_report,
     confusion_matrix,
-    roc_auc_score,
-    roc_curve,
-    ConfusionMatrixDisplay
 )
 import os 
 
@@ -120,12 +117,10 @@ print("=" * 50)
 print("MODEL EVALUATION")
 print("=" * 50)
 
-roc_auc = roc_auc_score(Y_test, Y_pred_prob)
 
 print("CLASSIFICATION REPORT:")
 print(" " + "-" * 50)
 print(classification_report(Y_test, Y_pred, target_names=["legititmate", "fraud"]))
-print(f"ROC_AUC SCORE: {roc_auc:.4f}")
 print(f"(1.0 = perfect, 0.5 = random guessing)\n")
 
 #Confusion Matrix
@@ -188,7 +183,6 @@ plt.tight_layout()
 print("=" * 50)
 print("XGBOOST FRAUD DETECTION COMPLETE")
 print("=" * 50)
-print(f"FINAL ROC-AUC SCORE: {roc_auc:.4f}")
 print(f"FRAUD CASES CAUGHT: {tp:,} / {tp+fn:,} ({tp/(tp+fn)*100:.1f}% recall)")
 print(f"FALSE ALARMS: {fp:,}")
 print(f"MISSED FRAUDS: {fn:,}")
