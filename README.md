@@ -1,0 +1,1 @@
+This project is a XGBoost fraud detection algorithm being used on a banking transaction dataset in python. The model is trained on a preprocessed data set and runs on a XGBoost algorithm and then the overall performance and confusion matrices are produced and saved at the end of the algorithm
