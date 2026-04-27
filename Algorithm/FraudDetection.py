@@ -29,11 +29,11 @@ DATA_PATH = "/Users/joe.alcock/Documents/Advanced-Topics-in-AI/Data/Processed/pr
 
 df = pd.read_csv(DATA_PATH)
 print(f"Loaded {df.shape[0]:,} rows and {df.shape[1]} columns")
-print(f"Fraud cases : df{['isFraud'].sum():,} ({df['isFraud'].mean()*100:.2f}%)")
-print(f"Legit cases : {(df['IsFraud'] == 0).sum():,}  ({(1 - df['IsFraud'].mean())*100:.2f}%)\n")
+print(f"Fraud cases : {df['isFraud'].sum():,} ({df['isFraud'].mean()*100:.2f}%)")
+print(f"Legit cases : {(df['isFraud'] == 0).sum():,}  ({(1 - df['isFraud'].mean())*100:.2f}%)\n")
 
 X = df.drop(columns=['isFraud'])
-Y = df['IsFraud']
+Y = df['isFraud']
 
 #Split Features and Target 
 print("=" * 50)
@@ -57,7 +57,7 @@ X_train, X_test, Y_train, Y_test = train_test_split(
 )
 
 print(f"Training Set : {X_train.shape[0]:,} rows ({Y_train.sum():,} fraud cases)")
-print(f"Test Set : {X_test.shape[0:,]} rows {Y_test.sum():,} fraud cases")
+print(f"Test Set : {X_test.shape[0]:,} rows {Y_test.sum():,} fraud cases")
 
 #Calculate class imbalance weight
 
@@ -141,35 +141,21 @@ print(f"False Positives (incorrectly identified as fraud) : {fp:,}")
 print(f"False Negatives (fraud missed by model) : {fn:,}")
 print(f"True Positives (correctly identified as fraud) : {tp:,}\n")
 
-fig, ax = plt.subplot(figsize=(7,5))
-disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["legitimate, fraud"])
-disp.plot(ax=ax, colorbar=True, cmap = "Blues")
-ax.set_title("Confusion Matrix - XGBOOST FRAUD DETECTION", fontsize = 13, fontweight = "bold")
+fig, ax = plt.subplots(figsize=(7, 5))
+sns.heatmap(
+    cm,
+    annot=True,
+    fmt="d",
+    cmap="Blues",
+    xticklabels=["Legitimate", "Fraud"],
+    yticklabels=["Legitimate", "Fraud"],
+    ax=ax
+)
+ax.set_xlabel("Predicted Label")
+ax.set_ylabel("True Label")
+ax.set_title("Confusion Matrix — XGBoost Fraud Detection", fontsize=13, fontweight="bold")
 plt.tight_layout()
-plt.savefig("/Users/joe.alcock/Documents/Advanced-Topics-in-AI/Algorithm/confusion_matrix.png", dpi=150)
-plt.show()
-print("CONFUSION MATRIX SAVED")
 
-#Roc Curve
-print("=" * 50)
-print("ROC CURVE")
-print("=" * 50)
-
-fpr, tpr, thresholds = roc_curve(Y_test, Y_pred_prob)
-
-fig,ax = plt.subplot(figsize = (7, 5))
-ax.plot(fpr, tpr, color = "steelblue", lw = 2, label = f"XGBoost (AUC = {roc_auc:.4f})")
-ax.plot([0,1], [0,1], color = "grey", linestyle = "--", lw = 1, label = "Random Classifier (AUC = 0.50)")
-ax.set_xlabel("False Positive Rate", fontsize = 11)
-ax.set_ylabel("True Positive Rate (Recall)", fontsize = 11)
-ax.set_title("ROC Curve - XGBoost Fraud Detection", fontsize = 13, fontweight = "bold")
-ax.legend(loc = "lower right")
-ax.grid(alpha = 0.3)
-plt.tight_layout()
-plt.savefig("/Users/joe.alcock/Documents/Advanced-Topics-in-AI/Algorithm/roc_curve.png", dpi=150)
-plt.show()
-print(f"ROC AUC : {roc_auc:.4f}")
-print("ROC CURVE SAVED")
 
 #Feature Importance 
 print("=" * 50)
@@ -186,23 +172,18 @@ for _, row in importance_df.iterrows():
     bar = "█" * int(row["Importance"] * 200)
     print(f" {row['Feature']:<25} {row['Importance']:.4f} {bar}")
 
-fig, ax = plt.subplots(figsize = (6, 9))
-sns.barplot(
-    data = importance_df,
-    x = "importance",
-    y = "feature", 
-    palette="Blues_r",
-    ax=ax
+fig, ax = plt.subplots(figsize=(9, 6))
+ax.barh(
+    importance_df["Feature"],
+    importance_df["Importance"],
+    color="steelblue"
 )
-
-ax.set_title("Feature Importance - XGBoost Fraud Detection", fontsize = 13, fontweight = "bold")
-ax.set_xlabel("importance score")
+ax.set_title("Feature Importance — XGBoost Fraud Detection", fontsize=13, fontweight="bold")
+ax.set_xlabel("Importance Score")
 ax.set_ylabel("")
-ax.grid(axis = "x", alpha = 0.3)
+ax.grid(axis="x", alpha=0.3)
+ax.invert_yaxis()
 plt.tight_layout()
-plt.savefig("/Users/joe.alcock/Documents/Advanced-Topics-in-AI/Algorithm/feature_importance.png", dpi=150)
-plt.show()
-print("\nFEATURE IMPORTANCE CHART SAVED")
 
 print("=" * 50)
 print("XGBOOST FRAUD DETECTION COMPLETE")
