@@ -150,6 +150,8 @@ ax.set_xlabel("Predicted Label")
 ax.set_ylabel("True Label")
 ax.set_title("Confusion Matrix — XGBoost Fraud Detection", fontsize=13, fontweight="bold")
 plt.tight_layout()
+plt.savefig("/Users/joe.alcock/Documents/Advanced-Topics-in-AI/Algorithm/Confusion.Matrix.png")
+
 
 
 #Feature Importance 
